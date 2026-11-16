@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">PulseTalk</string>
+    <string name="e2ee_badge_label">ECDH P-256 • AES-256-GCM</string>
+    <string name="auth_tagline">Private messaging, encrypted voice &amp; AI copilot</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="developer_attribution">PulseTalk™ v2.0 • Developed by Anupam • © 2026 Anupam. All Rights Reserved.</string>
+    <string name="cd_auth_hero">Encrypted biometric wave artwork</string>
+    <string name="cd_chat_wallpaper">Encrypted constellation chat background</string>
+    <string name="nav_chats">Chats</string>
+    <string name="nav_updates">Updates</string>
+    <string name="nav_calls">Calls</string>
+    <string name="nav_sync">Sync &amp; Vault</string>
+    <string name="settings_title">Settings</string>
+    <string name="ai_copilot_title">Gemini AI Copilot</string>
+    <string name="verify_safety_title">Verify E2EE Safety Number</string>
+    <string name="end_call_cd">End encrypted voice call</string>
+    <string name="toggle_mute_cd">Toggle microphone mute</string>
+    <string name="toggle_speaker_cd">Toggle speakerphone</string>
+</resources>

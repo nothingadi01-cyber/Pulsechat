@@ -1,0 +1,252 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Private authenticated user profile, security preferences, and public E2EE key metadata.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Authenticated user UID." },
+        "displayName": { "type": "string", "description": "User display name." },
+        "email": { "type": "string", "description": "Private user email." },
+        "about": { "type": "string", "description": "Profile status bio." },
+        "avatarEmoji": { "type": "string", "description": "Profile badge emoji." },
+        "publicKeyFingerprint": { "type": "string", "description": "SHA-256 E2EE identity key fingerprint." },
+        "e2eePublicKey": { "type": "string", "description": "Base64 X.509 ECDH P-256 public key." },
+        "twoStepEnabled": { "type": "boolean", "description": "Two-step PIN protection flag." },
+        "appLockEnabled": { "type": "boolean", "description": "Biometric/screen app lock flag." },
+        "readReceiptsEnabled": { "type": "boolean", "description": "Read receipts visibility preference." },
+        "defaultDisappearingHours": { "type": "integer", "description": "Default disappearing message duration in hours (0 = off)." },
+        "aiSmartRepliesEnabled": { "type": "boolean", "description": "Enable Gemini AI smart reply suggestions." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp." }
+      },
+      "required": ["userId", "displayName", "publicKeyFingerprint", "createdAt", "updatedAt"]
+    },
+    "PublicContactEntry": {
+      "title": "PublicContactEntry",
+      "description": "PII-free public directory entry for E2EE key discovery by UID.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner user UID." },
+        "displayName": { "type": "string", "description": "Public display name." },
+        "handle": { "type": "string", "description": "Unique PulseTalk handle." },
+        "about": { "type": "string", "description": "Public bio." },
+        "publicKeyFingerprint": { "type": "string", "description": "SHA-256 E2EE fingerprint." },
+        "e2eePublicKey": { "type": "string", "description": "Base64 ECDH P-256 public key." },
+        "isOnline": { "type": "boolean", "description": "Online presence indicator." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp." }
+      },
+      "required": ["userId", "displayName", "handle", "publicKeyFingerprint", "createdAt", "updatedAt"]
+    },
+    "ContactRecord": {
+      "title": "ContactRecord",
+      "description": "User-scoped contact entry with safety number verification state.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID." },
+        "contactUid": { "type": "string", "description": "Target contact UID or built-in vault/echo ID." },
+        "displayName": { "type": "string", "description": "Contact display name." },
+        "about": { "type": "string", "description": "Contact status note." },
+        "safetyNumber": { "type": "string", "description": "60-digit E2EE safety number." },
+        "verified": { "type": "boolean", "description": "Whether safety number has been verified." },
+        "favorite": { "type": "boolean", "description": "Favorite contact flag." },
+        "blocked": { "type": "boolean", "description": "Blocked contact flag." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp." }
+      },
+      "required": ["userId", "contactUid", "displayName", "safetyNumber", "createdAt", "updatedAt"]
+    },
+    "LinkedDevice": {
+      "title": "LinkedDevice",
+      "description": "Linked companion device for real-time multi-device sync.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID." },
+        "deviceName": { "type": "string", "description": "Device model and label." },
+        "platform": { "type": "string", "description": "OS/client platform." },
+        "keyFingerprint": { "type": "string", "description": "Device sub-key fingerprint." },
+        "isCurrent": { "type": "boolean", "description": "Whether this is the active Android device." },
+        "status": { "type": "string", "enum": ["active", "revoked"], "description": "Session status." },
+        "handoffNote": { "type": "string", "description": "Cross-device encrypted handoff snippet." },
+        "lastSyncAt": { "type": "string", "format": "date-time", "description": "Last sync heartbeat." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp." }
+      },
+      "required": ["userId", "deviceName", "platform", "keyFingerprint", "status", "lastSyncAt", "createdAt", "updatedAt"]
+    },
+    "CloudBackup": {
+      "title": "CloudBackup",
+      "description": "Encrypted cloud backup snapshot metadata and verifiable checksum.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID." },
+        "label": { "type": "string", "description": "Backup snapshot label." },
+        "chatCount": { "type": "integer", "description": "Number of backed-up chats." },
+        "messageCount": { "type": "integer", "description": "Number of backed-up encrypted messages." },
+        "sizeBytes": { "type": "integer", "description": "Estimated encrypted payload size in bytes." },
+        "checksumSha256": { "type": "string", "description": "SHA-256 integrity checksum." },
+        "encryptedManifest": { "type": "string", "description": "AES-256-GCM encrypted backup manifest." },
+        "encryptionMode": { "type": "string", "enum": ["E2EE-AES256"], "description": "Backup cipher mode." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp." }
+      },
+      "required": ["userId", "label", "chatCount", "messageCount", "sizeBytes", "checksumSha256", "encryptedManifest", "encryptionMode", "createdAt", "updatedAt"]
+    },
+    "StatusUpdate": {
+      "title": "StatusUpdate",
+      "description": "24-hour encrypted status story update.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID." },
+        "authorName": { "type": "string", "description": "Author display name." },
+        "caption": { "type": "string", "description": "Status text or caption." },
+        "bgStyle": { "type": "string", "description": "Gradient theme key." },
+        "mediaUri": { "type": "string", "description": "Optional picked image URI." },
+        "viewCount": { "type": "integer", "description": "View counter." },
+        "reactionEmoji": { "type": "string", "description": "Status reaction emoji." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp." }
+      },
+      "required": ["userId", "authorName", "caption", "bgStyle", "viewCount", "createdAt", "updatedAt"]
+    },
+    "ChannelFeed": {
+      "title": "ChannelFeed",
+      "description": "Followed broadcast channels and community announcements.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID." },
+        "name": { "type": "string", "description": "Channel title." },
+        "category": { "type": "string", "description": "Channel topic category." },
+        "latestUpdate": { "type": "string", "description": "Latest broadcast message." },
+        "followersLabel": { "type": "string", "description": "Follower count label." },
+        "verified": { "type": "boolean", "description": "Verified badge." },
+        "muted": { "type": "boolean", "description": "Muted notifications flag." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp." }
+      },
+      "required": ["userId", "name", "category", "latestUpdate", "createdAt", "updatedAt"]
+    },
+    "ChatThread": {
+      "title": "ChatThread",
+      "description": "End-to-end encrypted direct, group, community, or personal vault chat thread.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Chat thread title." },
+        "chatType": { "type": "string", "enum": ["direct", "group", "community", "vault", "broadcast"], "description": "Thread type." },
+        "createdBy": { "type": "string", "description": "Creator UID." },
+        "memberUids": { "type": "string", "description": "Array of authorized member UIDs (bounded <= 20)." },
+        "description": { "type": "string", "description": "Group, community, or thread description." },
+        "lastMessagePreview": { "type": "string", "description": "Latest message preview." },
+        "lastMessageSenderId": { "type": "string", "description": "Latest sender UID." },
+        "unreadCount": { "type": "integer", "description": "Unread message count." },
+        "pinned": { "type": "boolean", "description": "Pinned to top." },
+        "archived": { "type": "boolean", "description": "Archived state." },
+        "muted": { "type": "boolean", "description": "Muted notifications." },
+        "locked": { "type": "boolean", "description": "PIN-protected chat lock state." },
+        "pinnedMessagePreview": { "type": "string", "description": "Pinned message banner inside thread." },
+        "disappearingHours": { "type": "integer", "description": "Ephemeral message TTL in hours." },
+        "e2eeVerified": { "type": "boolean", "description": "Safety number verified." },
+        "encryptionKeyId": { "type": "string", "description": "Active session key fingerprint." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp." }
+      },
+      "required": ["title", "chatType", "createdBy", "memberUids", "encryptionKeyId", "createdAt", "updatedAt"]
+    },
+    "EncryptedMessage": {
+      "title": "EncryptedMessage",
+      "description": "AES-256-GCM encrypted message payload inside a chat thread.",
+      "type": "object",
+      "properties": {
+        "chatId": { "type": "string", "description": "Parent chat thread ID." },
+        "senderId": { "type": "string", "description": "Sender UID." },
+        "senderName": { "type": "string", "description": "Sender display name." },
+        "memberUids": { "type": "string", "description": "Denormalized authorized member UIDs." },
+        "ciphertext": { "type": "string", "description": "Base64 AES-256-GCM ciphertext." },
+        "iv": { "type": "string", "description": "Base64 12-byte GCM initialization vector." },
+        "encryptionScheme": { "type": "string", "enum": ["ECDH-P256-AES256-GCM", "PLAIN-SYS"], "description": "Cipher scheme." },
+        "messageType": { "type": "string", "enum": ["text", "voice", "image", "poll", "contact", "call_event", "system"], "description": "Message kind." },
+        "replyToPreview": { "type": "string", "description": "Quoted message snippet." },
+        "reactionEmoji": { "type": "string", "description": "Emoji reaction." },
+        "starred": { "type": "boolean", "description": "Starred flag." },
+        "edited": { "type": "boolean", "description": "Edited flag." },
+        "deletedForAll": { "type": "boolean", "description": "Tombstone flag." },
+        "forwarded": { "type": "boolean", "description": "Forwarded message badge." },
+        "viewOnce": { "type": "boolean", "description": "View-once ephemeral protection." },
+        "viewOnceOpened": { "type": "boolean", "description": "Whether view-once payload was revealed." },
+        "pollVotes": { "type": "string", "description": "Colon-delimited vote counts for polls." },
+        "mediaUri": { "type": "string", "description": "Optional attached visual URI." },
+        "voiceDurationSec": { "type": "integer", "description": "Voice note duration in seconds." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp." }
+      },
+      "required": ["chatId", "senderId", "senderName", "memberUids", "ciphertext", "encryptionScheme", "messageType", "createdAt", "updatedAt"]
+    },
+    "EncryptedCall": {
+      "title": "EncryptedCall",
+      "description": "E2EE voice call signaling and call history record with SAS verification.",
+      "type": "object",
+      "properties": {
+        "callerId": { "type": "string", "description": "Initiator UID." },
+        "callerName": { "type": "string", "description": "Caller display name." },
+        "calleeId": { "type": "string", "description": "Callee UID or echo test ID." },
+        "calleeName": { "type": "string", "description": "Callee display name." },
+        "memberUids": { "type": "string", "description": "Authorized participant UIDs." },
+        "status": { "type": "string", "enum": ["ringing", "active", "ended", "missed"], "description": "Call lifecycle state." },
+        "callerEphemeralPubKey": { "type": "string", "description": "Caller ephemeral ECDH P-256 public key." },
+        "calleeEphemeralPubKey": { "type": "string", "description": "Callee ephemeral ECDH P-256 public key." },
+        "sasCode": { "type": "string", "description": "Short Authentication String for voice E2EE verification." },
+        "cipherSuite": { "type": "string", "description": "Negotiated voice encryption cipher." },
+        "durationSeconds": { "type": "integer", "description": "Call duration in seconds." },
+        "isEchoTest": { "type": "boolean", "description": "Whether this is an encrypted voice loopback diagnostic call." },
+        "callLinkCode": { "type": "string", "description": "Optional shareable E2EE call invite link token." },
+        "callMode": { "type": "string", "description": "Voice call quality/mode tag." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp." }
+      },
+      "required": ["callerId", "callerName", "calleeId", "calleeName", "memberUids", "status", "callerEphemeralPubKey", "sasCode", "cipherSuite", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Private user profile and preferences."
+    },
+    "/public_directory/{userId}": {
+      "schema": { "$ref": "#/entities/PublicContactEntry" },
+      "description": "PII-free public E2EE key directory entry."
+    },
+    "/users/{userId}/contacts/{contactId}": {
+      "schema": { "$ref": "#/entities/ContactRecord" },
+      "description": "User-scoped contact list."
+    },
+    "/users/{userId}/devices/{deviceId}": {
+      "schema": { "$ref": "#/entities/LinkedDevice" },
+      "description": "Linked multi-device sync sessions."
+    },
+    "/users/{userId}/backups/{backupId}": {
+      "schema": { "$ref": "#/entities/CloudBackup" },
+      "description": "Encrypted cloud backup snapshots."
+    },
+    "/users/{userId}/statuses/{statusId}": {
+      "schema": { "$ref": "#/entities/StatusUpdate" },
+      "description": "User status updates."
+    },
+    "/users/{userId}/channels/{channelId}": {
+      "schema": { "$ref": "#/entities/ChannelFeed" },
+      "description": "User-subscribed broadcast channels."
+    },
+    "/chats/{chatId}": {
+      "schema": { "$ref": "#/entities/ChatThread" },
+      "description": "Encrypted chat threads."
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/EncryptedMessage" },
+      "description": "Encrypted messages inside a chat thread."
+    },
+    "/calls/{callId}": {
+      "schema": { "$ref": "#/entities/EncryptedCall" },
+      "description": "E2EE voice call signaling and call history."
+    }
+  }
+}

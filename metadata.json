@@ -1,0 +1,6 @@
+{
+  "name": "PulseTalk",
+  "description": "End-to-end encrypted messaging, voice calling, cloud backup, multi-device sync, and AI chat suggestions — Developed by Anupam.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
