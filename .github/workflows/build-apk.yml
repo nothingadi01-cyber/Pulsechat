@@ -5,32 +5,51 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-apk:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
-      - name: Setup Gradle
+      - name: Install Android SDK 36.1 & Build Tools 36.0.0
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "platforms;android-36.1" "build-tools;36.0.0"
+
+      - name: Setup Gradle 9.3.1
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.11.1'
+          gradle-version: '9.3.1'
 
-      - name: Restore Debug Keystore
+      - name: Prepare Environment & Debug Keystore
         run: |
+          cp -f .env.example .env || touch .env
           if [ -f "debug.keystore.base64" ]; then
             base64 -d debug.keystore.base64 > debug.keystore
           fi
 
       - name: Build Debug APK
         run: gradle assembleDebug --no-daemon
+
+      - name: Copy APK into app/src and Root Folder in GitHub Repo
+        run: |
+          cp -f app/build/outputs/apk/debug/app-debug.apk app/src/PulseTalk-v2.0.apk
+          cp -f app/build/outputs/apk/debug/app-debug.apk PulseTalk-v2.0.apk
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -f app/src/PulseTalk-v2.0.apk PulseTalk-v2.0.apk
+          git diff --staged --quiet || (git commit -m "Add direct PulseTalk-v2.0.apk in app/src and root [skip ci]" && git push)
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
